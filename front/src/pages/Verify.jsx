@@ -1,7 +1,7 @@
 import {Auth} from "aws-amplify"
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { confirmSignUp } from "../components/Auth";
+
 
 const Verify = () => {
     const [email, setEmail] = useState('');
@@ -13,7 +13,7 @@ const Verify = () => {
       event.preventDefault();
       try{
         console.log(email, code)
-      confirmSignUp(email, code);
+      confirmSignup(email, code);
 
       
       

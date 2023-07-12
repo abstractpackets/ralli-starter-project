@@ -1,19 +1,24 @@
-import { signIn } from "../components/Auth";
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { AuthContext } from "../components/AuthContext";
 import {Auth} from "aws-amplify"
+import {  Link, useNavigate, useLocation, Navigate} from 'react-router-dom'
 
-
-const Signin = () => {
-
+const Signin = ({children}) => {
+    let navigate = useNavigate();
+    let location = useLocation();
+    let datas = useContext(AuthContext)
+ 
+    let from = location.state?.from?.pathname || "/";
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
  
     const handleSubmit = async (event) => {
       event.preventDefault();
       try {
-          const user = await signIn(email, password);
-          console.log(`from signin page - ${user}`)
- 
+          const user = await datas.signin(email, password);
+          const res = JSON.stringify(user)
+      
+          navigate(from, { replace: true });
           
     }
     catch (error){

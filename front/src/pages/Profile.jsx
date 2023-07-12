@@ -1,10 +1,13 @@
 import {Auth} from "aws-amplify"
-
-
-const Profile = () => {
+import { useContext } from "react"
+import { AuthContext } from "../components/AuthContext"
+const Profile = ({children}) => {
+    
+    const datas = useContext(AuthContext)
+    
     return (
         <div>
-     Profile
+     hello 
         </div>
     )
 }

@@ -1,21 +1,22 @@
-import { signUp } from "../components/Auth";
-import {useState, useEffect} from 'react'
-const Signup = () => {
+import {useState, useEffect, useContext} from 'react'
+
+import { AuthContext } from '../components/AuthContext';
+const Signup = ({children}) => {
     const [name, setName] = useState('');
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [verifyPassword, setVerifyPassword] = useState('');
-  
+    const datas = useContext(AuthContext)
     const handleSubmit = async (event) => {
+        console.log(datas)
       event.preventDefault();
     
         try {
-             const user = await signUp(email,password,name);
-             console.log(user)
-                    
+             const user = await datas.signup(email,password,name);    
         }
         catch (error){
+ 
             console.log(error)
         }
       // Perform form validation and registration logic here

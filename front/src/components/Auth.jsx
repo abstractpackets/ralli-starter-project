@@ -1,5 +1,7 @@
-import { Amplify, Auth } from 'aws-amplify';
-
+import { Amplify, Auth } from 'aws-amplify'; 
+import { useState, useEffect, useContext} from 'react';
+import {useLocation, useNavigate, Navigate } from 'react-router-dom'
+import { AuthContext } from './AuthContext';
 Amplify.configure({
   Auth: {
 
@@ -33,59 +35,156 @@ Amplify.configure({
 
 // You can get the current config object
 const currentConfig = Auth.configure();
-export async function signUp(email, password, name) {
 
-  try {
+
+export  function AuthProvider({children}){
+  let [user, setUser] = useState(null)
+  let authStatus = realAuthProvider.authStatus
+  let signup = realAuthProvider.signup
+  let signin = realAuthProvider.signin
+  let confirmSignup = realAuthProvider.confirmSignup
+  let signout = realAuthProvider.signout
+
+  useEffect(()=>{
+    Auth.currentAuthenticatedUser({
+      bypassCache: false // Optional, By default is false. If set to true, this call will send a request to Cognito to get the latest user data
+    })
+      .then((data) => {
+        
     
-    const { user } = await Auth.signUp({
-        username: email,
-        password: password,
-        attributes: {
-          name: name,
-          email: email
-        },
-        autoSignIn: { // optional - enables auto sign in after user is confirmed
-          enabled: true,
-        }
-      });
-      console.log(user);
-      return(user)
-      window.location.href = `/verify?email=${email}`
-    console.log(user);
-  } catch (error) {
+        const res = JSON.stringify(data)
+  
+        setUser({res})
+     
+        return res
+      
+      })
+      .catch((err) => {
+        console.log('hey from auth catch')
+        console.log(err)});
+  
+  }, [setUser])
 
-    console.log('error signing up:', error);
-  }
+
+  let value = {user, signup, signin, authStatus, confirmSignup, signout}
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
+const realAuthProvider = {
+  isAuthenticated: false,
+  async signup(email, password,name){
+    try {
+    
+      const { user } = await Auth.signUp({
+          username: email,
+          password: password,
+          attributes: {
+            name: name,
+            email: email
+          },
+          autoSignIn: { // optional - enables auto sign in after user is confirmed
+            enabled: true,
+          }
+        });
+        console.log(user);
+        realAuthProvider.isAuthenticated = true
+        return(user)
+        window.location.href = `/verify?email=${email}`
 
-export async function confirmSignUp(email, code) {
+    } catch (error) {
+  
+      console.log('error signing up:', error);
+    }
+  },
+
+  // async authStatus(setUser) {
+    
+  //   let navigate = useNavigate();
+  
+
+
+    
+
+  
+  //   return (
+  //     <p>sdasd
+  //       Welcome !{" "}
+  //       <button
+  //         onClick={() => {
+  //           AuthProvider.signout(() => navigate("/"));
+  //         }}
+  //       >
+  //         Sign out
+  //       </button>
+  //     </p>
+  //   );
+  // },
+
+  async confirmSignup(email,code){
     try {
       await Auth.confirmSignUp(email, code);
+      realAuthProvider.isAuthenticated = true
       window.location.href = "/"
     } catch (error) {
       console.log('error confirming sign up', error);
     }
-  }
+  },
 
-export async function signIn(username, password) {
-  try {
-    const user = await Auth.signIn(username, password);
-    return JSON.stringify(user)
-  } catch (error) {
-    console.log('error signing in', error);
-  }
-}
+  async signin(username, password){
+    try {
+      const user = await Auth.signIn(username, password);
+      console.log(`hey from signin ${JSON.stringify(user)}`)
+      realAuthProvider.isAuthenticated = true
+      
 
-export async function signOut() {
+      // Auth.currentAuthenticatedUser({
+      //     bypassCache: false // Optional, By default is false. If set to true, this call will send a request to Cognito to get the latest user data
+      //   })
+      //     .then((user) => {
+      //       {
+      //         realAuthProvider.isAuthenticated = true
+      //         console.log(user)
+              
+      //       }
+      //     })
+      //     .catch((err) => console.log(err));
+         
+    } catch (error) {
+      console.log('error signing in', error);
+    }
+  },
+
+  async signout(){
     try {
       await Auth.signOut();
+      realAuthProvider.isAuthenticated = false;
     } catch (error) {
       console.log('error signing out: ', error);
     }
   }
+}
+
+// export function useAuth() {
+//   return useContext(AuthContext);
+// }
 
 
+
+export function RequireAuth({ children }) {
+  let datas = useContext(AuthContext)
+  console.log(datas)
+  let location = useLocation();
+
+  if (!datas.user) {
+    // Redirect them to the /login page, but save the current location they were
+    // trying to go to when they were redirected. This allows us to send them
+    // along to that page after they login, which is a nicer user experience
+    // than dropping them off on the home page.
+    return <Navigate to="/" state={{ from: location }} replace />;
+  }
+
+  return children;
+}
 // // Send confirmation code to user's email
 // Auth.forgotPassword(username)
 //   .then((data) => console.log(data))
