@@ -26,9 +26,9 @@ back/__pycache__
 
 ################
 ##    MISC    ##
-*/.env
-*/.tfstate
-*/.tfstate.*
-*/.scrt
-*/.tfvars
-*/.zip
+.env
+.tfstate
+.tfstate.*
+.scrt
+.tfvars
+.zip

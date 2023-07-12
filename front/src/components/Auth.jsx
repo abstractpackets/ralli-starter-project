@@ -1,29 +1,12 @@
-import { Auth } from 'aws-amplify';
 import { Amplify, Auth } from 'aws-amplify';
 
 Amplify.configure({
   Auth: {
-    // REQUIRED only for Federated Authentication - Amazon Cognito Identity Pool ID
-    identityPoolId: 'XX-XXXX-X:XXXXXXXX-XXXX-1234-abcd-1234567890ab',
 
-    // REQUIRED - Amazon Cognito Region
-    region: import.meta.env.AWS_REGION,
-
-    // OPTIONAL - Amazon Cognito Federated Identity Pool Region
-    // Required only if it's different from Amazon Cognito Region
-    identityPoolRegion: 'XX-XXXX-X',
-
-    // OPTIONAL - Amazon Cognito User Pool ID
-    userPoolId: import.meta.env.COGNITO_USER_POOL,
-
-    // OPTIONAL - Amazon Cognito Web Client ID (26-char alphanumeric string)
-    userPoolWebClientId: import.meta.env.COGNITO_CLIENT_ID,
-
-    // OPTIONAL - Enforce user authentication prior to accessing AWS resources or not
+    region: import.meta.env.VITE_AWS_REGION,
+    userPoolId: import.meta.env.VITE_COGNITO_USER_POOL,
+    userPoolWebClientId: import.meta.env.VITE_COGNITO_CLIENT_ID,
     mandatorySignIn: false,
-
-    // OPTIONAL - This is used when autoSignIn is enabled for Auth.signUp
-    // 'code' is used for Auth.confirmSignUp, 'link' is used for email link verification
     signUpVerificationMethod: 'code', // 'code' | 'link'
 
     // OPTIONAL - Configuration for cookie storage
@@ -44,38 +27,41 @@ Amplify.configure({
 
     // OPTIONAL - customized storage object
     // storage: MyStorage,
-
-
-  },
+},
 });
 
 
 // You can get the current config object
 const currentConfig = Auth.configure();
-export async function signUp() {
+export async function signUp(email, password, name) {
+
   try {
+    
     const { user } = await Auth.signUp({
-      username,
-      password,
-      attributes: {
-        email,          // optional
-        phone_number,   // optional - E.164 number convention
-        // other custom attributes 
-      },
-      autoSignIn: { // optional - enables auto sign in after user is confirmed
-        enabled: true,
-      }
-    });
+        username: email,
+        password: password,
+        attributes: {
+          name: name,
+          email: email
+        },
+        autoSignIn: { // optional - enables auto sign in after user is confirmed
+          enabled: true,
+        }
+      });
+      console.log(user);
+      window.location.href = `/verify?email=${email}`
     console.log(user);
   } catch (error) {
+
     console.log('error signing up:', error);
   }
 }
 
 
-export async function confirmSignUp() {
+export async function confirmSignUp(email, code) {
     try {
-      await Auth.confirmSignUp(username, code);
+      await Auth.confirmSignUp(email, code);
+      window.location.href = "/"
     } catch (error) {
       console.log('error confirming sign up', error);
     }
