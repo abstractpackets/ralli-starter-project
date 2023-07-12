@@ -49,6 +49,7 @@ export async function signUp(email, password, name) {
         }
       });
       console.log(user);
+      return(user)
       window.location.href = `/verify?email=${email}`
     console.log(user);
   } catch (error) {
@@ -67,9 +68,10 @@ export async function confirmSignUp(email, code) {
     }
   }
 
-export async function signIn() {
+export async function signIn(username, password) {
   try {
     const user = await Auth.signIn(username, password);
+    return JSON.stringify(user)
   } catch (error) {
     console.log('error signing in', error);
   }

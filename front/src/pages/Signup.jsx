@@ -11,7 +11,9 @@ const Signup = () => {
       event.preventDefault();
     
         try {
-             signUp(email,password,name);           
+             const user = await signUp(email,password,name);
+             console.log(user)
+                    
         }
         catch (error){
             console.log(error)

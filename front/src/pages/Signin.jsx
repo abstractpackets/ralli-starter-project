@@ -1,6 +1,7 @@
-
+import { signIn } from "../components/Auth";
+import { useState } from "react";
 import {Auth} from "aws-amplify"
-import {useState, useEffect} from 'react'
+
 
 const Signin = () => {
 
@@ -10,10 +11,10 @@ const Signin = () => {
     const handleSubmit = async (event) => {
       event.preventDefault();
       try {
-          const user = await Auth.signIn(email, password);
-          console.log(user)
+          const user = await signIn(email, password);
+          console.log(`from signin page - ${user}`)
  
-        //   window.location.href = `/?${user}`
+          
     }
     catch (error){
         console.log(error)
@@ -21,9 +22,9 @@ const Signin = () => {
       // Perform form validation and registration logic here
       // You can add your own validation rules and backend integration
   
-      // Reset form fields after submission
-      setEmail('');
-      setPassword('');
+    //   // Reset form fields after submission
+    //   setEmail('');
+    //   setPassword('');
 
     };      
     return (
