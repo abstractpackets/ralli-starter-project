@@ -1,0 +1,34 @@
+################
+##   BACKEND  ##
+
+/back/venv
+back/__pycache__
+
+
+
+################
+##  FRONTEND  ##
+/front/node_modules
+/front/*.env
+
+
+
+################
+## TERRAFORM  ##
+################
+/infra/.terraform
+/infra/*.tfvars
+/infra/*.tfstate
+/infra/*.env
+/infra/**/*/*.tfstate
+/infra/*.tfstate.backup
+/infra/*.hcl
+
+################
+##    MISC    ##
+*/.env
+*/.tfstate
+*/.tfstate.*
+*/.scrt
+*/.tfvars
+*/.zip
