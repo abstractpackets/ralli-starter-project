@@ -52,10 +52,14 @@ export  function AuthProvider({children}){
       .then((data) => {
         
     
-        const res = JSON.stringify(data)
-  
-        setUser({res})
-     
+        const res = data
+      console.log(res)
+        setUser({
+         sub: res.attributes.sub,
+         email: res.attributes.email,
+         name: res.attributes.name
+        })
+        console.log(user)
         return res
       
       })
@@ -172,7 +176,7 @@ const realAuthProvider = {
 
 export function RequireAuth({ children }) {
   let datas = useContext(AuthContext)
-  console.log(datas)
+  console.log(datas.user)
   let location = useLocation();
 
   if (!datas.user) {

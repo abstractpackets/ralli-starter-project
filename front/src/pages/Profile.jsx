@@ -4,10 +4,10 @@ import { AuthContext } from "../components/AuthContext"
 const Profile = ({children}) => {
     
     const datas = useContext(AuthContext)
-    
+    console.log(datas)
     return (
         <div>
-     hello 
+     welcome! email: ${datas.user.email}-- user sub: ${datas.user.sub} -- first name: ${datas.user.name}
         </div>
     )
 }
