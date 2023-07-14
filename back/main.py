@@ -2,6 +2,7 @@ from typing import Union
 import sqlalchemy
 from fastapi import FastAPI
 
+
 app = FastAPI()
 
 @app.get("/")

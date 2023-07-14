@@ -3,9 +3,9 @@ import psycopg2
 # PostgreSQL connection details
 host = "0.0.0.0"
 port = 5432
-database = "users"
-user = "postgres"
-password = "password"
+database = "${users}"
+user = "${postgres}"
+password = "${password}"
 
 # Establish a connection to the PostgreSQL container
 try:
