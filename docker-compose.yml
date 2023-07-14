@@ -1,0 +1,54 @@
+version: "3.8"
+services:
+  backend-fastapi:
+    build: ./back
+    environment: 
+      - AWS_RDS_PROD_URL="#"
+      - FRONTEND_API_URL="http://localhost:3000"
+      - BACKEND_URL="http://localhost:8000"
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}"
+      - COGNITO_USER_POOL_ID="${COGNITO_USER_POOL_ID}"
+      - COGNITO_CLIENT_ID="${COGNITO_CLIENT_ID}"
+      - POSTGRES_DB_URL="postgresql://${postgres}:${password}@db:5432"
+    ports:
+      - "8000:8000"
+    volumes:
+      - /backend/:/backend/
+  
+  frontend-react:
+    build: ./front
+    environment:
+      - VITE_AWS_REGION=${AWS_DEFAULT_REGION}
+      - VITE_COGNITO_USER_POOL=${COGNITO_USER_POOL_ID}
+      - VITE_COGNITO_CLIENT_ID=${COGNITO_CLIENT_ID}
+    ports:
+      - "3000:3000"
+
+  db: 
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=${password}
+      - POSTGRES_USER=${postgres}
+    ports:
+      - "5432:5432"
+    volumes: 
+      - db:/var/lib/postgresql/data
+  # xray-daemon:
+  #   image: "amazon/aws-xray-daemon"
+  #   environment:
+  #     AWS_ACCESS_KEY_ID: "#"
+  #     AWS_SECRET_ACCESS_KEY: "#"
+  #     AWS_REGION: "${AWS_DEFAULT_}"
+  #   command:
+  #     - "xray -o -b xray-daemon:2000"
+  #   ports:
+  #     - 2000:2000/udp
+
+networks:
+  internal-network: 
+    driver: bridge
+    name: d1      
+volumes:
+  db:
+    driver: local

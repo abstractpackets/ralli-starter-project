@@ -16,8 +16,10 @@ export reset="\033[m"
 # fi
 AWS_REGION=$(terraform output -raw aws_region)
 export AWS_REGION
+export AWS_DEFAULT_REGION=${AWS_REGION}
 COGNITO_USER_POOL=$(terraform output -json | jq -r '.[]|select(.value | startswith("us-east-1_"))'.value)
 export COGNITO_USER_POOL
+export COGNITO_USER_POOL_ID=${COGNITO_USER_POOL}
 COGNITO_CLIENT_ID=$(terraform output -raw cognito_client_id)
 export COGNITO_CLIENT_ID
 

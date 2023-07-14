@@ -76,9 +76,10 @@ export  function AuthProvider({children}){
 
 const realAuthProvider = {
   isAuthenticated: false,
+  
   async signup(email, password,name){
     try {
-    
+      let from = location.state?.from?.pathname || "/";
       const { user } = await Auth.signUp({
           username: email,
           password: password,
@@ -92,7 +93,9 @@ const realAuthProvider = {
         });
         console.log(user);
         realAuthProvider.isAuthenticated = true
+        navigate(from, { replace: true });
         return(user)
+
         window.location.href = `/verify?email=${email}`
 
     } catch (error) {
