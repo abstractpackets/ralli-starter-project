@@ -16,7 +16,7 @@ const Signin = ({children}) => {
       event.preventDefault();
       try {
           const user = await datas.signin(email, password);
-     
+         datas.getAttr(datas.setUser)
       
           navigate(from, { replace: true });
           

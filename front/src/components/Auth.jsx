@@ -44,7 +44,7 @@ export  function AuthProvider({children}){
   let signin = realAuthProvider.signin
   let confirmSignup = realAuthProvider.confirmSignup
   let signout = realAuthProvider.signout
-  let attr = realAuthProvider.getAttr
+  let getAttr = realAuthProvider.getAttr
   // let getSession = realAuthProvider.getSession
 
   useEffect(() => {
@@ -59,7 +59,7 @@ export  function AuthProvider({children}){
 
   }, []);
 
-  let value = {user, setUser,signup, signin,  authStatus, confirmSignup, signout}
+  let value = {user, setUser,signup, signin,  getAttr, authStatus, confirmSignup, signout}
  
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

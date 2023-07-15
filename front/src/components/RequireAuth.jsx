@@ -6,7 +6,7 @@ export default function RequireAuth({ children }) {
     console.log(datas.user)
     let location = useLocation();
   
-    if (true) {
+    if (datas.user) {
    
       return children;
     }else{
