@@ -46,6 +46,7 @@ export  function AuthProvider({children}){
   let signout = realAuthProvider.signout
   let getAttr = realAuthProvider.getAttr
   // let getSession = realAuthProvider.getSession
+  let loadProfileData = realAuthProvider.loadProfileData
 
   useEffect(() => {
     Auth.currentSession()
@@ -57,9 +58,10 @@ export  function AuthProvider({children}){
     .catch((err) => console.log(err));
     realAuthProvider.getAttr(setUser)
 
+
   }, []);
 
-  let value = {user, setUser,signup, signin,  getAttr, authStatus, confirmSignup, signout}
+  let value = {user, setUser,signup, signin,  loadProfileData, getAttr, authStatus, confirmSignup, signout}
  
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
@@ -110,6 +112,23 @@ const realAuthProvider = {
     })
     .catch((err)=> console.log(err))
  
+  },
+
+  async loadProfileData (id) {
+    try {
+      const backend_url = `http://localhost:8000/profile/${id}`
+      const res = await fetch(backend_url);
+      var body = await res.json();
+    
+      console.log(body)
+      // if (res.status === 200) {
+      //  console.log(resJson)
+      // } else {
+      //   console.log(res)
+      // }
+    } catch (err) {
+      console.log(err);
+    } 
   },
 
   // async authStatus(setUser) {

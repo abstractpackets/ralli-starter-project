@@ -4,9 +4,9 @@
   --grey: #30333D; /* Gunmetal */
   --light-green: #3D8450; /* Sea Green */
   --dark-green: #2E673C; /* Hunter green */
-  --dark-green: #B0B63D; /* Apple green */
-  --dark-green: #4063B5; /* True blue */
-  --dark-green: #364E71; /* YlnMnBlue */
+  --apple-green: #B0B63D; /* Apple green */
+  --true-blue: #4063B5; /* True blue */
+  --dark-blue: #364E71; /* YlnMnBlue */
 
 }
 html {
@@ -25,3 +25,13 @@ header, h1, h2, h3, h4, h5, h6 {
   font-family: Verdana, sans-serif;
   font-weight: 500;
 }
+
+.layout{
+  max-width: 1000px;
+  display: grid;
+}
+.footer {
+  margin-top: 3rem;
+  border-top: 2px dashed var(--dark-green);
+}
+

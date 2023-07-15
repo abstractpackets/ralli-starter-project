@@ -1,6 +1,6 @@
 import psycopg2
 
-def get_profile():
+def db_get_profile(id):
   try:
     connection = psycopg2.connect(host='localhost', user='crash',
                                 password='password', 
@@ -33,6 +33,7 @@ def get_profile():
         name, email = row
         print("Name:", name)
         print("Email:", email)
+        return row
     else:
         print("No user found.")
 
@@ -41,3 +42,6 @@ def get_profile():
     connection.close()
   except:
      print("fail!")
+
+
+db_get_profile("d")
