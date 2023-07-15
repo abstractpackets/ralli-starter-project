@@ -1,12 +1,13 @@
+import './App.css'
 import {Routes, Route, Link, useNavigate, useLocation, Navigate} from 'react-router-dom'
 import { useState } from 'react'
-import './App.css'
 import Layout from './Layout'
 import Home from './pages/Home'
 import Profile from './pages/Profile'
-import { AuthProvider, RequireAuth } from './components/Auth'
+import { AuthProvider } from './components/Auth'
 import Signin from './pages/Signin'
 import Signup from './pages/Signup'
+import RequireAuth from './components/RequireAuth' 
 import Verify from './pages/Verify'
 function App() {
 

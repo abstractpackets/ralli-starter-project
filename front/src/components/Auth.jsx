@@ -44,33 +44,26 @@ export  function AuthProvider({children}){
   let signin = realAuthProvider.signin
   let confirmSignup = realAuthProvider.confirmSignup
   let signout = realAuthProvider.signout
+  let getSession = realAuthProvider.getSession
 
-  useEffect(()=>{
-    Auth.currentAuthenticatedUser({
-      bypassCache: false // Optional, By default is false. If set to true, this call will send a request to Cognito to get the latest user data
-    })
-      .then((data) => {
-        
-    
-        const res = data
-      console.log(res)
-        setUser({
-         sub: res.attributes.sub,
-         email: res.attributes.email,
-         name: res.attributes.name
-        })
-        console.log(user)
-        return res
-      
-      })
-      .catch((err) => {
-        console.log('hey from auth catch')
-        console.log(err)});
-  
-  }, [setUser])
+  useEffect(() => {
+    const checkAuthStatus = async () => {
+      try {
+        await Auth.currentAuthenticatedUser();
+        // User is authenticated
+        // You can perform any necessary actions here
+        console.log('User is authenticated');
+      } catch (error) {
+        // User is not authenticated
+        console.log('User is not authenticated');
+      }
+    };
 
+    // Check if user is authenticated on component mount
+    checkAuthStatus();
+  }, []);
 
-  let value = {user, signup, signin, authStatus, confirmSignup, signout}
+  let value = {user, setUser, signup, signin, getSession, authStatus, confirmSignup, signout}
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
@@ -80,6 +73,7 @@ const realAuthProvider = {
   async signup(email, password,name){
     try {
       let from = location.state?.from?.pathname || "/";
+   
       const { user } = await Auth.signUp({
           username: email,
           password: password,
@@ -93,10 +87,10 @@ const realAuthProvider = {
         });
         console.log(user);
         realAuthProvider.isAuthenticated = true
-        navigate(from, { replace: true });
+      
         return(user)
-
-        window.location.href = `/verify?email=${email}`
+        
+        // window.location.href = `/verify?email=${email}`
 
     } catch (error) {
   
@@ -140,21 +134,9 @@ const realAuthProvider = {
   async signin(username, password){
     try {
       const user = await Auth.signIn(username, password);
-      console.log(`hey from signin ${JSON.stringify(user)}`)
-      realAuthProvider.isAuthenticated = true
+      // console.log(user)
+      return user
       
-
-      // Auth.currentAuthenticatedUser({
-      //     bypassCache: false // Optional, By default is false. If set to true, this call will send a request to Cognito to get the latest user data
-      //   })
-      //     .then((user) => {
-      //       {
-      //         realAuthProvider.isAuthenticated = true
-      //         console.log(user)
-              
-      //       }
-      //     })
-      //     .catch((err) => console.log(err));
          
     } catch (error) {
       console.log('error signing in', error);
@@ -168,6 +150,14 @@ const realAuthProvider = {
     } catch (error) {
       console.log('error signing out: ', error);
     }
+  },
+  getSession(){
+    Auth.currentSession()
+    .then((data) => {
+      console.log(data)
+      return data
+    })
+    .catch((err) => console.log(err));
   }
 }
 
@@ -176,22 +166,16 @@ const realAuthProvider = {
 // }
 
 
-
-export function RequireAuth({ children }) {
-  let datas = useContext(AuthContext)
-  console.log(datas.user)
-  let location = useLocation();
-
-  if (!datas.user) {
-    // Redirect them to the /login page, but save the current location they were
-    // trying to go to when they were redirected. This allows us to send them
-    // along to that page after they login, which is a nicer user experience
-    // than dropping them off on the home page.
-    return <Navigate to="/" state={{ from: location }} replace />;
-  }
-
-  return children;
+export function getSession(){
+  // ryanef39+14@gmail.com
+  Auth.currentSession()
+  .then((data) => {
+    console.log(data)
+    return data
+  })
+  .catch((err) => console.log(err));
 }
+
 // // Send confirmation code to user's email
 // Auth.forgotPassword(username)
 //   .then((data) => console.log(data))

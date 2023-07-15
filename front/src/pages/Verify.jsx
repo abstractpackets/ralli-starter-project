@@ -1,5 +1,6 @@
 import {Auth} from "aws-amplify"
-import { useState, useEffect } from "react";
+import { useState, useContext, useEffect } from "react";
+import {AuthContext} from '../components/AuthContext'
 import { useParams } from "react-router-dom";
 
 
@@ -7,13 +8,13 @@ const Verify = () => {
     const [email, setEmail] = useState('');
     const [code, setCode] = useState('');
     const params = useParams();
-
+    const datas = useContext(AuthContext)
 
     const handleSubmit = async (event) => {
       event.preventDefault();
       try{
         console.log(email, code)
-      confirmSignup(email, code);
+      datas.confirmSignup(email, code);
 
       
       

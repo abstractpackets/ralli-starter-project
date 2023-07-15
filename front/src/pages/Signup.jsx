@@ -1,5 +1,5 @@
 import {useState, useEffect, useContext} from 'react'
-
+import {Navigate, useNavigate, useLocation} from 'react-router-dom'
 import { AuthContext } from '../components/AuthContext';
 const Signup = ({children}) => {
     const [name, setName] = useState('');
@@ -8,12 +8,19 @@ const Signup = ({children}) => {
     const [password, setPassword] = useState('');
     const [verifyPassword, setVerifyPassword] = useState('');
     const datas = useContext(AuthContext)
+    const location = useLocation()
+    const navigate = useNavigate()
+    let from = location.state?.from?.pathname || "/";
     const handleSubmit = async (event) => {
         console.log(datas)
       event.preventDefault();
     
         try {
+           
              const user = await datas.signup(email,password,name);    
+           
+            
+            
         }
         catch (error){
  
