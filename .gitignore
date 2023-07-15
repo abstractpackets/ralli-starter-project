@@ -32,3 +32,6 @@ back/__pycache__
 .scrt
 .tfvars
 .zip
+
+scratch
+*.scratch
