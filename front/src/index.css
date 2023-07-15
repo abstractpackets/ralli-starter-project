@@ -1,5 +1,27 @@
-*{
+:root {
+  --white: #F8F8F8; /* #Seasalt */
+  --black: #282933; /* Raisin Black */
+  --grey: #30333D; /* Gunmetal */
+  --light-green: #3D8450; /* Sea Green */
+  --dark-green: #2E673C; /* Hunter green */
+  --dark-green: #B0B63D; /* Apple green */
+  --dark-green: #4063B5; /* True blue */
+  --dark-green: #364E71; /* YlnMnBlue */
+
+}
+html {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+}
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+body {
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  margin: 1rem;
+  background-color: var(--white);
+  color: var(--black);
+}
+header, h1, h2, h3, h4, h5, h6 {
+  font-family: Verdana, sans-serif;
+  font-weight: 500;
 }

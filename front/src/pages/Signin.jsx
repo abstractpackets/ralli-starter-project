@@ -11,18 +11,13 @@ const Signin = ({children}) => {
     let from = location.state?.from?.pathname || "/";
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    // const setUser = datas.setUser
 
     const handleSubmit = async (event) => {
       event.preventDefault();
       try {
           const user = await datas.signin(email, password);
-          console.log(user)
-          datas.setUser({
-            name: user.attributes.name,
-            sub: user.attributes.sub,
-            email: user.attributes.email
-          })
+     
+      
           navigate(from, { replace: true });
           
     }

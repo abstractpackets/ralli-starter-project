@@ -44,26 +44,23 @@ export  function AuthProvider({children}){
   let signin = realAuthProvider.signin
   let confirmSignup = realAuthProvider.confirmSignup
   let signout = realAuthProvider.signout
-  let getSession = realAuthProvider.getSession
+  let attr = realAuthProvider.getAttr
+  // let getSession = realAuthProvider.getSession
 
   useEffect(() => {
-    const checkAuthStatus = async () => {
-      try {
-        await Auth.currentAuthenticatedUser();
-        // User is authenticated
-        // You can perform any necessary actions here
-        console.log('User is authenticated');
-      } catch (error) {
-        // User is not authenticated
-        console.log('User is not authenticated');
-      }
-    };
+    Auth.currentSession()
+    .then((data) => {
+      console.log('from .then')
+      // this is jwt / token data
+      console.log('below data in .then')
+    })
+    .catch((err) => console.log(err));
+    realAuthProvider.getAttr(setUser)
 
-    // Check if user is authenticated on component mount
-    checkAuthStatus();
   }, []);
 
-  let value = {user, setUser, signup, signin, getSession, authStatus, confirmSignup, signout}
+  let value = {user, setUser,signup, signin,  authStatus, confirmSignup, signout}
+ 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
@@ -85,7 +82,7 @@ const realAuthProvider = {
             enabled: true,
           }
         });
-        console.log(user);
+       
         realAuthProvider.isAuthenticated = true
       
         return(user)
@@ -96,6 +93,23 @@ const realAuthProvider = {
   
       console.log('error signing up:', error);
     }
+  },
+  async getAttr(setUser){
+
+    const attr = Auth.currentAuthenticatedUser()
+    .then(({attributes}) => {
+
+      const attr = attributes
+      console.log(attr)    
+      setUser({
+        sub: attr.sub,
+        email: attr.email,
+        name: attr.name
+      })  
+      return attr
+    })
+    .catch((err)=> console.log(err))
+ 
   },
 
   // async authStatus(setUser) {
@@ -135,6 +149,7 @@ const realAuthProvider = {
     try {
       const user = await Auth.signIn(username, password);
       // console.log(user)
+      // setUser({})
       return user
       
          
@@ -151,14 +166,13 @@ const realAuthProvider = {
       console.log('error signing out: ', error);
     }
   },
-  getSession(){
-    Auth.currentSession()
-    .then((data) => {
-      console.log(data)
-      return data
-    })
-    .catch((err) => console.log(err));
-  }
+  // getSession(){
+  //   Auth.currentAuthenticatedUser({
+  //     bypassCache: false // Optional, By default is false. If set to true, this call will send a request to Cognito to get the latest user data
+  //   })
+  //     .then((user) => console.log(user))
+  //     .catch((err) => console.log(err));
+  // }
 }
 
 // export function useAuth() {
@@ -166,16 +180,7 @@ const realAuthProvider = {
 // }
 
 
-export function getSession(){
-  // ryanef39+14@gmail.com
-  Auth.currentSession()
-  .then((data) => {
-    console.log(data)
-    return data
-  })
-  .catch((err) => console.log(err));
-}
-
+// realAuthProvider.getSession()
 // // Send confirmation code to user's email
 // Auth.forgotPassword(username)
 //   .then((data) => console.log(data))

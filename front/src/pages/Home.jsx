@@ -3,8 +3,8 @@ import {Auth} from "aws-amplify"
 
 const Home= () => {
     return (
-        <div>
-        welcome! 
+        <div className="home">
+        home page!
         </div>
     )
 }

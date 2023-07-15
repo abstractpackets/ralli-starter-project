@@ -4,9 +4,9 @@ import { AuthContext } from "../components/AuthContext"
 const Profile = ({children}) => {
     
     const datas = useContext(AuthContext)
-  
+
     return (
-        <div>
+        <div className="profile">
             <p>hi {datas.user.name} your email is {datas.user.email}</p>
         </div>
     )
