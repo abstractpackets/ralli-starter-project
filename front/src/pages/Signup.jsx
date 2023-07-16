@@ -12,7 +12,7 @@ const Signup = ({children}) => {
     const navigate = useNavigate()
     let from = location.state?.from?.pathname || "/";
     const handleSubmit = async (event) => {
-        console.log(datas)
+     
       event.preventDefault();
     
         try {

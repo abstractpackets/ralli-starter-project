@@ -1,6 +1,5 @@
 import { Amplify, Auth } from 'aws-amplify'; 
 import { useState, useEffect, useContext} from 'react';
-import {useLocation, useNavigate, Navigate } from 'react-router-dom'
 import { AuthContext } from './AuthContext';
 Amplify.configure({
   Auth: {
@@ -48,38 +47,79 @@ export  function AuthProvider({children}){
   let getAttr = realAuthProvider.getAttr
 
 
- async function loadProfileData(user, setProfile){
-    const sub = user.sub
-    const res = await fetch (`http://localhost:8000/profile/${sub}`)
-    const data = await res.json();
-    console.log(`from data block`)
-    console.log(data)
-    return data
-  }
-
   useEffect(() => {
-    Auth.currentSession()
-    .then((data) => {
-      console.log('from .then')
-      // this is jwt / token data
-      console.log('below data in .then')
-    })
-    .catch((err) => console.log(err));
-    realAuthProvider.getAttr(setUser)
-    // if (user){
-    //   loadProfileData(user, setProfile).then((data) =>{console.log('hi')})
-    // }
+ 
+      Auth.currentAuthenticatedUser({
+        bypassCache: false // Optional, By default is false. If set to true, this call will send a request to Cognito to get the latest user data
+      })
+        .then((user) => 
+        {
+         
+          setUser({
+            sub: user.attributes.sub,
+            email: user.attributes.email,
+            name: user.attributes.name
+          })
+          console.log(user)
+        })
+        .catch((err) => console.log(err));
+    
+   
 
   }, []);
 
-  let value = {user, setUser,signup, signin, profile, loadProfileData, setProfile, getAttr, authStatus, confirmSignup, signout}
+  let value = {user, setUser,signup, signin, profile, setProfile, getAttr, authStatus, confirmSignup, signout}
  
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 const realAuthProvider = {
   isAuthenticated: false,
-  userInfo: {},
+  async confirmSignup(email,code){
+    try {
+      await Auth.confirmSignUp(email, code);
+      realAuthProvider.isAuthenticated = true
+      window.location.href = "/"
+    } catch (error) {
+      console.log('error confirming sign up', error);
+    }
+  },
+  async getAttr(setUser, setProfile){
+
+    const attr = Auth.currentAuthenticatedUser()
+    .then(({attributes}) => {
+
+      const attr = attributes
+     console.log("get attr!")
+      setUser({
+        sub: attr.sub,
+        email: attr.email,
+        name: attr.name
+      })  
+      realAuthProvider.isAuthenticated = true
+      return attr
+    })
+    .catch((err)=> console.log(err))
+ 
+  },
+  async signin(username, password){
+    try {
+      const user = await Auth.signIn(username, password);
+      realAuthProvider.isAuthenticated = true
+      return user
+       
+    } catch (error) {
+      console.log('error signing in', error);
+    }
+  },
+  async signout(){
+    try {
+      await Auth.signOut();
+      realAuthProvider.isAuthenticated = false;
+    } catch (error) {
+      console.log('error signing out: ', error);
+    }
+  },
   async signup(email, password,name){
     try {
       let from = location.state?.from?.pathname || "/";
@@ -107,51 +147,4 @@ const realAuthProvider = {
       console.log('error signing up:', error);
     }
   },
-  async getAttr(setUser, setProfile){
-
-    const attr = Auth.currentAuthenticatedUser()
-    .then(({attributes}) => {
-
-      const attr = attributes
-      console.log(attr)    
-      setUser({
-        sub: attr.sub,
-        email: attr.email,
-        name: attr.name
-      })  
-      return attr
-    })
-    .catch((err)=> console.log(err))
- 
-  },
-
-  async confirmSignup(email,code){
-    try {
-      await Auth.confirmSignUp(email, code);
-      realAuthProvider.isAuthenticated = true
-      window.location.href = "/"
-    } catch (error) {
-      console.log('error confirming sign up', error);
-    }
-  },
-
-  async signin(username, password){
-    try {
-      const user = await Auth.signIn(username, password);
-      return user
-       
-    } catch (error) {
-      console.log('error signing in', error);
-    }
-  },
-
-  async signout(){
-    try {
-      await Auth.signOut();
-      realAuthProvider.isAuthenticated = false;
-    } catch (error) {
-      console.log('error signing out: ', error);
-    }
-  },
-
 }

@@ -17,7 +17,11 @@ const Signin = ({children}) => {
       
       try {
          const user = await datas.signin(email, password);
-         datas.getAttr(datas.setUser)
+        datas.setUser({
+            sub: user.attributes.sub,
+            email: user.attributes.email,
+            name: user.attributes.name
+          })
       
         navigate(from, { replace: true });    
     }

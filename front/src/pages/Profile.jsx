@@ -1,27 +1,14 @@
 import {Auth} from "aws-amplify"
 import { useContext } from "react"
+import { useParams } from "react-router-dom"
 import { AuthContext } from "../components/AuthContext"
 const Profile =  ({children}) => {
-
+    const {id} = useParams;
     const datas = useContext(AuthContext)
-    if(datas.profile===null){
-        datas.loadProfileData(datas.user, datas.setProfile).then((data) =>{console.log('hi')
-        datas.setProfile(
-         {
-            name: data.name,
-            email: data.email
-        }
-        )
-    })
-    }
-
-
    
-    // console.log(prof)
-    console.log(datas.profile)
     return (
         <div className="profile">
-            <p>hi from python and postgres! {datas.profile.name} your email is {datas.profile.email}</p>
+            hi {datas.user.name}! this is from python and postgres
         </div>
     )
 }
