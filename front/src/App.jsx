@@ -1,6 +1,6 @@
 import './App.css'
 import {Routes, Route, Link, useNavigate, useLocation, Navigate} from 'react-router-dom'
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 import Layout from './Layout'
 import Home from './pages/Home'
 import Profile from './pages/Profile'

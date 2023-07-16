@@ -39,14 +39,23 @@ const currentConfig = Auth.configure();
 
 export  function AuthProvider({children}){
   let [user, setUser] = useState(null)
+  let [profile, setProfile] = useState(null)
   let authStatus = realAuthProvider.authStatus
   let signup = realAuthProvider.signup
   let signin = realAuthProvider.signin
   let confirmSignup = realAuthProvider.confirmSignup
   let signout = realAuthProvider.signout
   let getAttr = realAuthProvider.getAttr
-  // let getSession = realAuthProvider.getSession
-  let loadProfileData = realAuthProvider.loadProfileData
+
+
+ async function loadProfileData(user, setProfile){
+    const sub = user.sub
+    const res = await fetch (`http://localhost:8000/profile/${sub}`)
+    const data = await res.json();
+    console.log(`from data block`)
+    console.log(data)
+    return data
+  }
 
   useEffect(() => {
     Auth.currentSession()
@@ -57,18 +66,20 @@ export  function AuthProvider({children}){
     })
     .catch((err) => console.log(err));
     realAuthProvider.getAttr(setUser)
-
+    // if (user){
+    //   loadProfileData(user, setProfile).then((data) =>{console.log('hi')})
+    // }
 
   }, []);
 
-  let value = {user, setUser,signup, signin,  loadProfileData, getAttr, authStatus, confirmSignup, signout}
+  let value = {user, setUser,signup, signin, profile, loadProfileData, setProfile, getAttr, authStatus, confirmSignup, signout}
  
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 const realAuthProvider = {
   isAuthenticated: false,
-  
+  userInfo: {},
   async signup(email, password,name){
     try {
       let from = location.state?.from?.pathname || "/";
@@ -96,7 +107,7 @@ const realAuthProvider = {
       console.log('error signing up:', error);
     }
   },
-  async getAttr(setUser){
+  async getAttr(setUser, setProfile){
 
     const attr = Auth.currentAuthenticatedUser()
     .then(({attributes}) => {
@@ -114,46 +125,6 @@ const realAuthProvider = {
  
   },
 
-  async loadProfileData (id) {
-    try {
-      const backend_url = `http://localhost:8000/profile/${id}`
-      const res = await fetch(backend_url);
-      var body = await res.json();
-    
-      console.log(body)
-      // if (res.status === 200) {
-      //  console.log(resJson)
-      // } else {
-      //   console.log(res)
-      // }
-    } catch (err) {
-      console.log(err);
-    } 
-  },
-
-  // async authStatus(setUser) {
-    
-  //   let navigate = useNavigate();
-  
-
-
-    
-
-  
-  //   return (
-  //     <p>sdasd
-  //       Welcome !{" "}
-  //       <button
-  //         onClick={() => {
-  //           AuthProvider.signout(() => navigate("/"));
-  //         }}
-  //       >
-  //         Sign out
-  //       </button>
-  //     </p>
-  //   );
-  // },
-
   async confirmSignup(email,code){
     try {
       await Auth.confirmSignUp(email, code);
@@ -167,11 +138,8 @@ const realAuthProvider = {
   async signin(username, password){
     try {
       const user = await Auth.signIn(username, password);
-      // console.log(user)
-      // setUser({})
       return user
-      
-         
+       
     } catch (error) {
       console.log('error signing in', error);
     }
@@ -185,38 +153,5 @@ const realAuthProvider = {
       console.log('error signing out: ', error);
     }
   },
-  // getSession(){
-  //   Auth.currentAuthenticatedUser({
-  //     bypassCache: false // Optional, By default is false. If set to true, this call will send a request to Cognito to get the latest user data
-  //   })
-  //     .then((user) => console.log(user))
-  //     .catch((err) => console.log(err));
-  // }
+
 }
-
-// export function useAuth() {
-//   return useContext(AuthContext);
-// }
-
-
-// realAuthProvider.getSession()
-// // Send confirmation code to user's email
-// Auth.forgotPassword(username)
-//   .then((data) => console.log(data))
-//   .catch((err) => console.log(err));
-
-// // Collect confirmation code and new password, then
-// Auth.forgotPasswordSubmit(username, code, new_password)
-//   .then((data) => console.log(data))
-//   .catch((err) => console.log(err));
-
-
-//   Auth.currentAuthenticatedUser({
-//     bypassCache: false // Optional, By default is false. If set to true, this call will send a request to Cognito to get the latest user data
-//   })
-//     .then((user) => console.log(user))
-//     .catch((err) => console.log(err));
-
-//     Auth.currentSession()
-//     .then((data) => console.log(data))
-//     .catch((err) => console.log(err));

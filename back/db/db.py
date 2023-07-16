@@ -1,5 +1,10 @@
 import psycopg2
+import random
 
+def db_new_user_update():
+   
+   
+   return "hi"
 def db_get_profile(id):
   try:
     connection = psycopg2.connect(host='localhost', user='crash',

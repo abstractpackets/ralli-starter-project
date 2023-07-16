@@ -14,24 +14,17 @@ const Signin = ({children}) => {
 
     const handleSubmit = async (event) => {
       event.preventDefault();
+      
       try {
-          const user = await datas.signin(email, password);
+         const user = await datas.signin(email, password);
          datas.getAttr(datas.setUser)
       
-          navigate(from, { replace: true });
-          
+        navigate(from, { replace: true });    
     }
     catch (error){
         console.log(error)
-    }     
-      // Perform form validation and registration logic here
-      // You can add your own validation rules and backend integration
-  
-    //   // Reset form fields after submission
-    //   setEmail('');
-    //   setPassword('');
+    }};      
 
-    };      
     return (
         <div className="form">
             <form onSubmit={handleSubmit}>
