@@ -1,40 +1,28 @@
-import {useState, useEffect, useContext} from 'react'
+import {useState} from 'react'
 import {Navigate, useNavigate, useLocation} from 'react-router-dom'
-import { AuthContext } from '../components/AuthContext';
+
+import { realAuthProvider } from "../components/AuthProvider";
 const Signup = ({children}) => {
     const [name, setName] = useState('');
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [verifyPassword, setVerifyPassword] = useState('');
-    const datas = useContext(AuthContext)
+  
     const location = useLocation()
     const navigate = useNavigate()
     let from = location.state?.from?.pathname || "/";
     const handleSubmit = async (event) => {
-     
+      const {signup} = realAuthProvider();
       event.preventDefault();
     
-        try {
-           
-             const user = await datas.signup(email,password,name);    
-           
-            
-            
-        }
+        try{           
+             const user = await signup(email,password,name);    
+            }
         catch (error){
- 
-            console.log(error)
-        }
-      // Perform form validation and registration logic here
-      // You can add your own validation rules and backend integration
-  
-      // Reset form fields after submission
-    //   setName('');
-    //   setUsername('');
-    //   setEmail('');
-    //   setPassword('');
-    //   setVerifyPassword('');
+             console.log(error)
+            }
+
     };   
     return (
         <div className="form">
@@ -47,14 +35,6 @@ const Signup = ({children}) => {
             onChange={(event) => setName(event.target.value)}
             />
         </label>
-        {/* <label>
-            Username:
-            <input
-            type="text"
-            value={username}
-            onChange={(event) => setUsername(event.target.value)}
-            />
-        </label> */}
         <br />
         <label>
             Email:

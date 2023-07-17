@@ -1,16 +1,16 @@
 import './App.css'
-import { useContext } from 'react';
-import {Routes, Route} from 'react-router-dom'
-import Layout from './Layout'
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
+// import { AuthProvider } from './components/Auth'
+import RequireAuth from './components/RequireAuth' 
+import {Routes, Route} from 'react-router-dom'
+import { AuthContext } from './components/Auth';
+import Layout from './Layout'
 import Home from './pages/Home'
 import Profile from './pages/Profile'
-import { AuthProvider } from './components/Auth'
 import Signin from './pages/Signin'
 import Signup from './pages/Signup'
-import RequireAuth from './components/RequireAuth' 
 import Verify from './pages/Verify'
-import { AuthContext } from './components/AuthContext';
+import { useContext } from 'react';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -20,31 +20,28 @@ const queryClient = new QueryClient({
     }
   }
 })
+
 const App = () => {
+  const {user, id} = useContext(AuthContext)
 
     return (
-      <AuthProvider>
+
         <QueryClientProvider client={queryClient}>
-       
-            <Routes>
-              <Route element={<Layout />}>
+     
+            <Routes id={id}>
+              <Route element={<Layout  id={id}/>}>
                 <Route path="/" element={<Home />} />
                 <Route path="/signin" element={<Signin />} />
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/verify" element={<Verify />} />
-                <Route
-                  path="/profile/"
-                  element={
-                    <RequireAuth>
-                      <Profile />
-                    </RequireAuth>
-                  }
-                />
+                <Route element={<RequireAuth user={user}/>}>
+                     <Route path="/profile/:id" element={<Profile user={user} id={id}/>}/>
+                </Route>
               </Route>
             </Routes>
         
+
         </QueryClientProvider>
-    </AuthProvider>
     )
 
 }

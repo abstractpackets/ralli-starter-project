@@ -1,13 +1,14 @@
-import { useState, useContext } from "react";
-import { AuthContext } from "../components/AuthContext";
-import {Auth} from "aws-amplify"
+import { useState } from "react";
+import { realAuthProvider } from "../components/AuthProvider";
 import {  Link, useNavigate, useLocation, Navigate} from 'react-router-dom'
 
-const Signin = ({children}) => {
+const Signin = (props) => {
+    console.log(props)
+   
+    let {signin} = realAuthProvider();
     let navigate = useNavigate();
     let location = useLocation();
-    let datas = useContext(AuthContext)
-   
+ 
     let from = location.state?.from?.pathname || "/";
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -16,8 +17,8 @@ const Signin = ({children}) => {
       event.preventDefault();
       
       try {
-         const user = await datas.signin(email, password);
-        datas.setUser({
+         const user = await signin(email, password);
+         MyContext.setUser({
             sub: user.attributes.sub,
             email: user.attributes.email,
             name: user.attributes.name

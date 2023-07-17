@@ -1,5 +1,5 @@
 import {Link} from 'react-router-dom'
-const Header = () => {
+const Header = ({id}) => {
     return (
         <header>
             <h1>CompanyLogo</h1>
@@ -8,7 +8,7 @@ const Header = () => {
                     <Link to="/"><li>Home</li></Link>
                     <Link to="/signup"><li>Signup</li></Link>
                     <Link to="/signin"><li>Signin</li></Link>
-                    <Link to="/profile"><li>Profile</li></Link>
+                    <Link to={`/profile/${id}`}><li>Profile</li></Link>
                 </ul>
             </nav>
         </header>

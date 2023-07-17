@@ -1,150 +1,51 @@
 import { Amplify, Auth } from 'aws-amplify'; 
-import { useState, useEffect, useContext} from 'react';
-import { AuthContext } from './AuthContext';
+import { useState, useEffect, useContext, createContext} from 'react';
+import {realAuthProvider} from './AuthProvider';
+import App from '../App';
+
 Amplify.configure({
   Auth: {
-
     region: import.meta.env.VITE_AWS_REGION,
     userPoolId: import.meta.env.VITE_COGNITO_USER_POOL,
     userPoolWebClientId: import.meta.env.VITE_COGNITO_CLIENT_ID,
     mandatorySignIn: false,
     signUpVerificationMethod: 'code', // 'code' | 'link'
-
-    // OPTIONAL - Configuration for cookie storage
-    // Note: if the secure flag is set to true, then the cookie transmission requires a secure protocol
-    // cookieStorage: {
-    //   // REQUIRED - Cookie domain (only required if cookieStorage is provided)
-    //   domain: '.yourdomain.com',
-    //   // OPTIONAL - Cookie path
-    //   path: '/',
-    //   // OPTIONAL - Cookie expiration in days
-    //   expires: 365,
-    //   // OPTIONAL - See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie/SameSite
-    //   sameSite: 'strict' | 'lax',
-    //   // OPTIONAL - Cookie secure flag
-    //   // Either true or false, indicating if the cookie transmission requires a secure protocol (https).
-    //   secure: true,
-    // },
-
-    // OPTIONAL - customized storage object
-    // storage: MyStorage,
 },
 });
 
+export const AuthContext = createContext();
 
-// You can get the current config object
 const currentConfig = Auth.configure();
 
-
 export  function AuthProvider({children}){
-  let [user, setUser] = useState(null)
-  let [profile, setProfile] = useState(null)
-  let authStatus = realAuthProvider.authStatus
-  let signup = realAuthProvider.signup
-  let signin = realAuthProvider.signin
-  let confirmSignup = realAuthProvider.confirmSignup
-  let signout = realAuthProvider.signout
-  let getAttr = realAuthProvider.getAttr
+  const {currentUser} = realAuthProvider();
 
+  const [user, setUser] = useState(null) 
+  const [id, setId] = useState(null) 
 
-  useEffect(() => {
+  useEffect(()=>{
  
-      Auth.currentAuthenticatedUser({
-        bypassCache: false // Optional, By default is false. If set to true, this call will send a request to Cognito to get the latest user data
-      })
-        .then((user) => 
-        {
-         
-          setUser({
-            sub: user.attributes.sub,
-            email: user.attributes.email,
-            name: user.attributes.name
-          })
-          console.log(user)
-        })
-        .catch((err) => console.log(err));
-    
-   
+      if(!user){
+        loader()
+      }
 
-  }, []);
+  }, [user])
 
-  let value = {user, setUser,signup, signin, profile, setProfile, getAttr, authStatus, confirmSignup, signout}
- 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
-
-const realAuthProvider = {
-  isAuthenticated: false,
-  async confirmSignup(email,code){
-    try {
-      await Auth.confirmSignUp(email, code);
-      realAuthProvider.isAuthenticated = true
-      window.location.href = "/"
-    } catch (error) {
-      console.log('error confirming sign up', error);
-    }
-  },
-  async getAttr(setUser, setProfile){
-
-    const attr = Auth.currentAuthenticatedUser()
-    .then(({attributes}) => {
-
-      const attr = attributes
-     console.log("get attr!")
-      setUser({
-        sub: attr.sub,
-        email: attr.email,
-        name: attr.name
-      })  
-      realAuthProvider.isAuthenticated = true
-      return attr
+  async function loader(){
+    let res = await currentUser()
+    console.log(res)
+    let info = {...res.attr}
+    console.log(info)
+    setUser({
+      name: info.name,
+      email: info.email,
+      sub: info.sub
     })
-    .catch((err)=> console.log(err))
- 
-  },
-  async signin(username, password){
-    try {
-      const user = await Auth.signIn(username, password);
-      realAuthProvider.isAuthenticated = true
-      return user
-       
-    } catch (error) {
-      console.log('error signing in', error);
-    }
-  },
-  async signout(){
-    try {
-      await Auth.signOut();
-      realAuthProvider.isAuthenticated = false;
-    } catch (error) {
-      console.log('error signing out: ', error);
-    }
-  },
-  async signup(email, password,name){
-    try {
-      let from = location.state?.from?.pathname || "/";
+    setId(info.sub)
    
-      const { user } = await Auth.signUp({
-          username: email,
-          password: password,
-          attributes: {
-            name: name,
-            email: email
-          },
-          autoSignIn: { // optional - enables auto sign in after user is confirmed
-            enabled: true,
-          }
-        });
-       
-        realAuthProvider.isAuthenticated = true
-      
-        return(user)
-        
-        // window.location.href = `/verify?email=${email}`
+  }
 
-    } catch (error) {
-  
-      console.log('error signing up:', error);
-    }
-  },
+ 
+  return <AuthContext.Provider value={{user, id}}>{children}</AuthContext.Provider>;
 }
+

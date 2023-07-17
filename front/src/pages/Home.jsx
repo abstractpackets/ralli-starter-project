@@ -1,7 +1,7 @@
 import {Auth} from "aws-amplify"
 
 
-const Home= () => {
+const Home= ({id}) => {
     return (
         <div className="home">
         home page!

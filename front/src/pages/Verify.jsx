@@ -1,6 +1,5 @@
 import {Auth} from "aws-amplify"
 import { useState, useContext, useEffect } from "react";
-import {AuthContext} from '../components/AuthContext'
 import { useParams } from "react-router-dom";
 
 

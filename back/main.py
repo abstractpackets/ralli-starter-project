@@ -27,7 +27,8 @@ def read_root():
 
 
 @app.get("/profile/{id}")
-async def get_profile(id: str, q: Union[str, None] = None):
+async def get_profile(id: str):
+    print(id)
     user_info = db_get_profile("f")
     print(user_info)
     first_name = user_info[0]
