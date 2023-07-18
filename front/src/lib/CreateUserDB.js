@@ -25,7 +25,7 @@ const createDBuser = async ({queryKey}) => {
     if(!apiRes.ok) {
         throw new Error(`details ${id} didnt create`)
     }
-
+    console.log(apiRes)
     //     // expects you to return a promise so you can return it without awaiting. 
     //     // react query expects a promise so don't await it
     return apiRes.json()

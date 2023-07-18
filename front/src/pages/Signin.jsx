@@ -18,11 +18,7 @@ const Signin = (props) => {
       
       try {
          const user = await signin(email, password);
-         MyContext.setUser({
-            sub: user.attributes.sub,
-            email: user.attributes.email,
-            name: user.attributes.name
-          })
+   
       
         navigate(from, { replace: true });    
     }

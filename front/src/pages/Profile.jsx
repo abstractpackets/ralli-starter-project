@@ -7,23 +7,21 @@ const Profile =  ({user}) => {
     console.log(user)
     // give usequery a key of what you're requesting
     // the overall term, and then the id.. 
-    // if you don't have user info [1] in cache then go run createDBuser
-    if(user){
-        const results = useQuery(["user info", {user}], createDBuser);
-        if (results.isLoading){
-            return (
-                <div>
-                    loading!
-                </div>
-            )
-        }
-    }
+    const results = useQuery(["user info", {user}], createDBuser)
     // no await you cannot await in a render function
-
+    // if you don't have user info [1] in cache then go run createDBuser
+    if(results.isLoading){
+        return(
+            <div>Loading! Please wait!</div>
+        )
+    }
+    const {data} = results
+    console.log(data)
 
     return (
         <div className="profile">
-        hi {user.name} - {user.sub}
+      hi {data.name} welcome! your email is {data.email}
+     
         </div>
 
 
