@@ -3,7 +3,15 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from fastapi import FastAPI
 from db.db import db_get_profile
+from db.db import db_post_profile
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+
+
+class Item(BaseModel):
+    name: str
+    email: str
+    id: str
 
 app = FastAPI()
 
@@ -25,6 +33,18 @@ app.add_middleware(
 def read_root():
     return {"Hello": "World"}
 
+@app.post("/profile/create")
+async def create_profile(item: Item):
+    print(item)
+    db_post_profile(item.id, item.name, item.email)
+    return item
+    
+    # user_info = db_post_profile(id, user.name, user.email)
+    # print(user_info)
+
+ 
+ 
+
 
 @app.get("/profile/{id}")
 async def get_profile(id: str):
@@ -36,4 +56,5 @@ async def get_profile(id: str):
     email = user_info[1]
     return {"name": first_name, "email": email}
  
+
 

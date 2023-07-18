@@ -6,9 +6,12 @@ const Header = ({id}) => {
             <nav>
                 <ul>
                     <Link to="/"><li>Home</li></Link>
+
+                    <Link to={`/profile/${id}`}><li>Profile</li></Link>
+                   
                     <Link to="/signup"><li>Signup</li></Link>
                     <Link to="/signin"><li>Signin</li></Link>
-                    <Link to={`/profile/${id}`}><li>Profile</li></Link>
+                    
                 </ul>
             </nav>
         </header>

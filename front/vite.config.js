@@ -8,6 +8,7 @@ export default defineConfig({
     global: {}
   },
   server: {
+    cors: false,
     host: "0.0.0.0",
     port: 3000, // This is the port which we will use in docker
     // Thanks @sergiomoura for the window fix

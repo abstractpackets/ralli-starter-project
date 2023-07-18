@@ -1,25 +1,27 @@
 import './App.css'
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
-// import { AuthProvider } from './components/Auth'
 import RequireAuth from './components/RequireAuth' 
 import {Routes, Route} from 'react-router-dom'
 import { AuthContext } from './components/Auth';
 import Layout from './Layout'
 import Home from './pages/Home'
+import createDBuser from './lib/CreateUserDB';
 import Profile from './pages/Profile'
 import Signin from './pages/Signin'
 import Signup from './pages/Signup'
 import Verify from './pages/Verify'
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 30000,
-      cacheTime: 30000
+      staleTime: 100,
+      cacheTime: 100
     }
   }
 })
+
+
 
 const App = () => {
   const {user, id} = useContext(AuthContext)
